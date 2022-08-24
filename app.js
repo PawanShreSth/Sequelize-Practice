@@ -44,8 +44,12 @@ Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' }); // inverse 
 User.hasOne(Cart);
 Cart.belongsTo(User); // Inverse of the relation and it is optional
 
+Cart.belongsToMany(Product, { through: CartItem }); // Cart Item is the bridging entity
+Product.belongsToMany(Cart, { through: CartItem });
+
 sequelize
-  .sync({ force: true })
+  .sync()
+  // .sync({ force: true })
   .then(result => {
     return User.findByPk(1);
     // console.log(result);
@@ -61,6 +65,9 @@ sequelize
   })
   .then(user => {
     console.log(user);
+    user.createCart();
+  })
+  .then(cart => {
     app.listen(3000);
   })
   .catch(err => {
